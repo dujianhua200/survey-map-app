@@ -1,0 +1,123 @@
+name: Build SurveyMap (Android / Windows / macOS)
+
+'on':
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+          cache: true
+
+      - name: Verify Flutter version
+        run: flutter --version
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run code generation (Drift)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build Android APK (release)
+        run: flutter build apk --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: survey-map-android-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+          cache: true
+
+      - name: Verify Flutter version
+        run: flutter --version
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run code generation (Drift)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build Windows release
+        run: flutter build windows --release
+
+      - name: Package Windows build
+        shell: pwsh
+        run: |
+          $outDir = "survey_map_windows"
+          New-Item -ItemType Directory -Path $outDir -Force
+          Copy-Item -Path "build\windows\x64\runner\Release\*" -Destination $outDir -Recurse -Force
+          Compress-Archive -Path "$outDir\*" -DestinationPath "survey_map_windows.zip" -Force
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: survey-map-windows-zip
+          path: survey_map_windows.zip
+          retention-days: 30
+
+  build-macos:
+    name: Build macOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+          cache: true
+
+      - name: Verify Flutter version
+        run: flutter --version
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run code generation (Drift)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build macOS release
+        run: flutter build macos --release
+
+      - name: Package macOS .app
+        run: |
+          APP_NAME="SurveyMap"
+          APP_PATH="build/macos/Build/Products/Release/${APP_NAME}.app"
+          if [ ! -d "$APP_PATH" ]; then
+            APP_PATH="build/macos/Build/Products/Release/survey_map_app.app"
+          fi
+          ditto -c -k --keepParent "$APP_PATH" "survey_map_macos.zip"
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: survey-map-macos-zip
+          path: survey_map_macos.zip
+          retention-days: 30
