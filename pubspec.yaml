@@ -17,7 +17,7 @@ dependencies:
   geolocator: ^14.0.3
   geodesy: ^0.10.2
   proj4dart: ^2.1.0
-  drift: ^2.35.0
+  drift: ^2.34.0
   drift_flutter: ^0.3.1
   sqlite3_flutter_libs: ^0.6.0
   path_provider: ^2.1.4
@@ -50,8 +50,8 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
   build_runner: ^2.16.1
-  freezed: ^4.0.0
-  drift_dev: ^2.35.0
+  freezed: ^3.2.5
+  drift_dev: ^2.34.0
   mockito: ^5.4.4
   bloc_test: ^9.1.7
 
