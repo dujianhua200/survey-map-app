@@ -14,7 +14,7 @@ class MapState extends Equatable {
     this.isReady = false,
     this.center = const LatLng(39.9042, 116.4074),
     this.zoom = 10.0,
-    this.activeBaseSource = 'tianditu_vec',
+    this.activeBaseSource = 'osm',
     this.activeOverlays = const [],
     this.customSources = const [],
     this.error,

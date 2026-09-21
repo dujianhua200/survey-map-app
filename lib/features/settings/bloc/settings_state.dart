@@ -12,7 +12,7 @@ class SettingsState extends Equatable {
   const SettingsState({
     this.isLoading = false,
     this.isDarkTheme = false,
-    this.preferredMapSource = 'tianditu_vec',
+    this.preferredMapSource = 'osm',
     this.tiandituKey,
     this.mapboxToken,
     this.locationAccuracy = 'high',
