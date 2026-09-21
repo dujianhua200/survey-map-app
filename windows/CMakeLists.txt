@@ -2,6 +2,10 @@
 cmake_minimum_required(VERSION 3.14)
 project(survey_map_app LANGUAGES CXX)
 
+# Suppress MSVC STL1011 error from legacy /await + <experimental/coroutine>
+# usage pulled in by older plugin code (e.g. permission_handler_windows).
+add_compile_definitions(_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS)
+
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
 set(BINARY_NAME "survey_map_app")
